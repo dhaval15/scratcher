@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:scratcher/utils.dart';
 
@@ -13,6 +12,7 @@ class ScratchPainter extends CustomPainter {
     this.image,
     this.imageFit,
     this.onDraw,
+    this.foregroundPainter,
   });
 
   /// List of revealed points from scratcher
@@ -23,6 +23,9 @@ class ScratchPainter extends CustomPainter {
 
   /// Path to local image which can be used as scratch area
   final ui.Image image;
+
+  /// Custom Foreground Painter
+  final CustomPainter foregroundPainter;
 
   /// Determine how the image should fit the scratch area
   final BoxFit imageFit;
@@ -58,7 +61,9 @@ class ScratchPainter extends CustomPainter {
           Alignment.center.inscribe(sizes.destination, areaRect);
       canvas.drawImageRect(image, inputSubrect, outputSubrect, Paint());
     }
-    LinesPainter().paint(canvas, size);
+    if (foregroundPainter != null) {
+      foregroundPainter.paint(canvas, size);
+    }
 
     var path = Path();
     var isStarted = false;
@@ -91,69 +96,4 @@ class ScratchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ScratchPainter oldDelegate) => true;
-}
-
-// class ScratchContainer extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomPaint(
-//       painter: LinesPainter(),
-//       child: Padding(
-//         padding: EdgeInsets.symmetric(vertical: 64, horizontal: 32),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.max,
-//           children: <Widget>[
-//             CircleAvatar(
-//               maxRadius: 80,
-//               backgroundColor: Kolors.giftIconBackGround,
-//               child: WebsafeSvg.asset('icons/gift2.svg', height: 96, width: 96),
-//             ),
-//             SizedBox(height: 32),
-//             Text(
-//               'You won a Scratch Card',
-//               style: TextStyle(
-//                 fontSize: 24,
-//                 fontWeight: FontWeight.bold,
-//                 color: Kolors.whiteLabel,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class LinesPainter extends CustomPainter {
-  final double radius = 24;
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final gradient = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    );
-    Path back = Path();
-    back.addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)));
-    canvas.drawShadow(back, Colors.black.withOpacity(0.7), 4, false);
-    canvas.drawPath(back, Paint()..shader = gradient.createShader(rect));
-    for (double y = 5; y < size.height - 5; y = y + 30) {
-      Path path = Path();
-      path.moveTo(5, y + 5 * math.sin(5 / 8));
-      for (double x = 5; x < size.width - 5; x++) {
-        path.lineTo(x, y + 5 * math.sin(x / 8));
-      }
-      canvas.drawPath(
-          path,
-          Paint()
-            ..color = Colors.white.withOpacity(0.3)
-            ..style = PaintingStyle.stroke);
-      canvas.clipRect(rect);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
-  }
 }
