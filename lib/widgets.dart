@@ -45,6 +45,7 @@ class Scratcher extends StatefulWidget {
     this.accuracy = ScratchAccuracy.high,
     this.color = Colors.black,
     this.image,
+    this.foregroundPainter,
     this.onChange,
     this.onThreshold,
   }) : super(key: key);
@@ -67,6 +68,9 @@ class Scratcher extends StatefulWidget {
 
   /// Image widget used to cover the child widget.
   final Image image;
+
+  /// Custom Foreground Painter
+  final CustomPainter foregroundPainter;
 
   /// Callback called when new part of area is revealed (min 0.1% difference).
   final Function(double value) onChange;
@@ -118,6 +122,7 @@ class ScratcherState extends State<Scratcher> {
           final paint = CustomPaint(
             foregroundPainter: ScratchPainter(
               image: snapshot.data,
+              foregroundPainter: widget.foregroundPainter,
               imageFit: widget.image == null
                   ? null
                   : widget.image.fit ?? BoxFit.cover,
