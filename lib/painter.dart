@@ -50,9 +50,6 @@ class ScratchPainter extends CustomPainter {
 
     canvas.saveLayer(null, Paint());
 
-    if (foregroundPainter != null) {
-      foregroundPainter.paint(canvas, size);
-    }
     final areaRect = Rect.fromLTRB(0, 0, size.width, size.height);
     canvas.drawRect(areaRect, Paint()..color = color);
     if (image != null) {
@@ -63,6 +60,10 @@ class ScratchPainter extends CustomPainter {
       final outputSubrect =
           Alignment.center.inscribe(sizes.destination, areaRect);
       canvas.drawImageRect(image, inputSubrect, outputSubrect, Paint());
+    }
+
+    if (foregroundPainter != null) {
+      foregroundPainter.paint(canvas, size);
     }
 
     var path = Path();
